@@ -20,48 +20,50 @@
     <canvas id="juego"></canvas>
     <script>
         var mov = 10;
+        var obstaculos = [];
+
         function startGame() {
             area.start();
-            myGamePiece = new component(mov, mov, "black", 50, 50);
-            interval = setInterval(updateGameArea, 1);
+            myGamePiece = new jugador(mov, mov, "black", 50, 50);
+            intervalJugador = setInterval(updateGameArea, 1);
+            setInterval(crearObstaculo, 3000);
         }
 
         var area = {
-            canvas : document.getElementById('juego'),
-            start : function() {
+            canvas: document.getElementById('juego'),
+            start: function() {
                 this.canvas.width = 500;
                 this.canvas.height = 500;
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.context.font = "16px Arial";
             },
-            clear : function() {
+            clear: function() {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             },
-            mP : function() {
-                this.canvas.addEventListener('mousemove', e => {
-                    var cRect = this.canvas.getBoundingClientRect();
-                    var canvasX = Math.round(e.clientX - cRect.left);
-                    var canvasY = Math.round(e.clientY - cRect.top);
-                    // myGamePiece.x = canvasX-mov;
-                    
+            mP: function() {
+                // this.canvas.addEventListener('mousemove', e => {
+                //     var cRect = this.canvas.getBoundingClientRect();
+                //     var canvasX = Math.round(e.clientX - cRect.left);
+                //     var canvasY = Math.round(e.clientY - cRect.top);
+                //     // myGamePiece.x = canvasX-mov;
 
-                    if (canvasY < this.canvas.height){
-                        myGamePiece.y = canvasY-mov;
-                        if (myGamePiece.y < 0) {
-                            myGamePiece.y = 0;
-                        }
-                    }
-                    
-                    return {
-                        x : canvasX,
-                        y : canvasY
-                    }
-                });
+                //     if (canvasY < this.canvas.height) {
+                //         myGamePiece.y = canvasY - mov;
+                //         if (myGamePiece.y < 0) {
+                //             myGamePiece.y = 0;
+                //         }
+                //     }
+
+                //     return {
+                //         x: canvasX,
+                //         y: canvasY
+                //     }
+                // });
             }
         }
 
-        function component(width, height, color, x, y) {
+        function jugador(width, height, color, x, y) {
             this.width = width;
             this.height = height;
             this.speedX = 0;
@@ -71,7 +73,7 @@
             ctx = area.context;
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
-            
+
             this.update = function() {
                 ctx = area.context;
                 ctx.fillStyle = color;
@@ -79,26 +81,50 @@
             }
 
         }
-  
+
+        class obstaculo {
+            constructor() {
+                ctx = area.context;
+                this.x = area.canvas.width;
+                this.y = 0;
+
+                this.uno = Math.floor(Math.random() * (470) / 10) * 10;
+                console.log(this.uno);
+
+
+            }
+            update() {
+                ctx.fillRect(this.x, this.y, mov, this.uno);
+                
+                ctx.fillRect(this.x, this.uno + 30, mov, 500 - this.uno - 30);
+            }
+        }
+        function crearObstaculo() {
+            obstaculos.push(new obstaculo());
+        }
+
         function updateGameArea() {
             area.clear();
             area.mP();
             myGamePiece.update();
+            obstaculos.forEach(o => {
+                o.x -= 0.5;
+                o.update();
+            });
         }
 
-
-
-        // document.addEventListener('keydown', function(event) {
-        //     if(event.keyCode == 65) {
-        //         myGamePiece.x -= mov;
-        //     } else if(event.keyCode == 68) {
-        //         myGamePiece.x += mov;
-        //     } else if(event.keyCode == 87) {
-        //         myGamePiece.y -= mov;
-        //     } else if(event.keyCode == 83) {
-        //         myGamePiece.y += mov;
-        //     }
-        // });
+        
+        document.addEventListener('keydown', function(event) {
+            if(event.keyCode == 65) {
+                myGamePiece.x -= mov;
+            } else if(event.keyCode == 68) {
+                myGamePiece.x += mov;
+            } else if(event.keyCode == 87) {
+                myGamePiece.y -= mov;
+            } else if(event.keyCode == 83) {
+                myGamePiece.y += mov;
+            }
+        });
 
         
 
