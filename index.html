@@ -23,6 +23,7 @@
         function startGame() {
             area.start();
             myGamePiece = new component(mov, mov, "black", 50, 50);
+            interval = setInterval(updateGameArea, 1);
         }
 
         var area = {
@@ -33,7 +34,6 @@
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.context.font = "16px Arial";
-                this.interval = setInterval(updateGameArea, 1);
             },
             clear : function() {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -43,8 +43,16 @@
                     var cRect = this.canvas.getBoundingClientRect();
                     var canvasX = Math.round(e.clientX - cRect.left);
                     var canvasY = Math.round(e.clientY - cRect.top);
-                    myGamePiece.x = canvasX-mov;
-                    myGamePiece.y = canvasY-mov;
+                    // myGamePiece.x = canvasX-mov;
+                    
+
+                    if (canvasY < this.canvas.height){
+                        myGamePiece.y = canvasY-mov;
+                        if (myGamePiece.y < 0) {
+                            myGamePiece.y = 0;
+                        }
+                    }
+                    
                     return {
                         x : canvasX,
                         y : canvasY
@@ -64,39 +72,33 @@
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
             
-
             this.update = function() {
                 ctx = area.context;
                 ctx.fillStyle = color;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
 
-            this.newPos = function() {
-            }
         }
   
         function updateGameArea() {
             area.clear();
-            myGamePiece.newPos();
+            area.mP();
             myGamePiece.update();
-            
-            var pos = area.mP();
-            
         }
 
 
 
-        document.addEventListener('keydown', function(event) {
-            if(event.keyCode == 65) {
-                myGamePiece.x -= mov;
-            } else if(event.keyCode == 68) {
-                myGamePiece.x += mov;
-            } else if(event.keyCode == 87) {
-                myGamePiece.y -= mov;
-            } else if(event.keyCode == 83) {
-                myGamePiece.y += mov;
-            }
-        });
+        // document.addEventListener('keydown', function(event) {
+        //     if(event.keyCode == 65) {
+        //         myGamePiece.x -= mov;
+        //     } else if(event.keyCode == 68) {
+        //         myGamePiece.x += mov;
+        //     } else if(event.keyCode == 87) {
+        //         myGamePiece.y -= mov;
+        //     } else if(event.keyCode == 83) {
+        //         myGamePiece.y += mov;
+        //     }
+        // });
 
         
 
